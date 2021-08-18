@@ -1,7 +1,7 @@
 'use strict';
 
 const util = {
-    randomInteger: function(min, max) {
+    randomInteger: function (min, max) {
         return Math.floor(min + Math.random() * (max + 1 - min));
     }
 }
@@ -31,7 +31,7 @@ Array.method('popRandom', function () {
 })
 
 Array.method("shuffle", function () {
-    for(let i = 0; i < this.length; i++) {
+    for (let i = 0; i < this.length; i++) {
         let index = Math.floor(Math.random() * (i + 1));
         let saved = this[index];
         this[index] = this[i];
@@ -112,6 +112,148 @@ app.Sudoku.prototype = {
                 cell.innerHTML = values[i][j];
             }
         }
+    },
+
+    hide: function (count) {
+        const that = this;
+        for (let i = 0; i < count; i++) {
+            let processing = true;
+            // Избегаем повторения полей, чтобы скрыть ненужное количество
+            while (processing) {
+                let rowNumber = util.randomInteger(0, that.expo - 1);
+                let colNumber = util.randomInteger(0, that.expo - 1);
+                // если поле уже скрыто, выбираем новое значение
+                if (!that.table.rows[rowNumber].cells[colNumber].hidden) {
+                    that.table.rows[rowNumber].cells[colNumber].hidden = true;
+                    that.table.rows[rowNumber].cells[colNumber].innerHTML = "";
+                    let editCell = document.createElement("input");
+                    that.table.rows[rowNumber].cells[colNumber].appendChild(editCell);
+                    that.table.rows[rowNumber].cells[colNumber].editCell = editCell;
+                    // Добавляем событие на изменение значения поля
+                    editCell.addEventListener("change", function () {
+                        that.check();
+                    });
+                    processing = false;
+                }
+            }
+        }
+    },
+
+    check: function () {
+        const that = this;
+        that.unmark();
+
+        // Создаём и заполняем проверочные массивы. По ним отслеживаем,
+        // чтобы значения не повторялись
+        let rows = [],
+            columns = [],
+            areas = [];
+        for (let i = 0; i < that.expo; i++) {
+            rows.push([].fillIncr(that.expo, 1));
+            columns.push([].fillIncr(that.expo, 1));
+            areas.push([].fillIncr(that.expo, 1));
+        }
+
+        // Проверяем значения
+        Array.prototype.forEach.call(that.table.rows, function (row, i) {
+            Array.prototype.forEach.call(row.cells, function (cell, j) {
+                let value = that.getValue(cell);
+                // в проверочных массивах заменяем существующие в игровом поле
+                // значения на 0
+                rows[i].findAndReplace(value, 0);
+                columns[j].findAndReplace(value, 0);
+                areas[that.getArea(i, j)].findAndReplace(value, 0);
+            });
+        });
+
+        // Проверяем правильность заполнения, создаём счётчик для проверки
+        let correct = {
+            rows: 0,
+            columns: 0,
+            areas: 0
+        };
+
+        for (let i = 0; i < that.expo; i++) {
+            // если все цифры в группе уникальны, помечаем группу, увеличиваем счётчик
+            if (rows[i].allMembers(0)) {
+                that.markRow(i);
+                correct.rows++;
+            }
+            if (columns[i].allMembers(0)) {
+                that.markColumn(i);
+                correct.columns++;
+            }
+            if (areas[i].allMembers(0)) {
+                that.markArea(i);
+                correct.areas++;
+            }
+
+            // если все группы отмечены как правильные, игра заканчивается
+            if (correct.rows === that.expo &&
+                correct.columns === that.expo &&
+                correct.areas === that.expo) {
+                if (typeof (that.win) === 'function') {
+                    that.win();
+                }
+            }
+        }
+    },
+
+    // отмечает ячейку cell классом, либо снимает класс, в зависимости от state
+    markCell: function (cell, state) {
+        if (state) {
+            cell.addClass('marked');
+        } else {
+            cell.removeClass('marked');
+        }
+    },
+
+    // возвращает значение ячейки, для поля, либо простой ячейки
+    getValue: function (cell) {
+        if (cell.editCell) {
+            return parseInt(cell.editCell.value, 10);
+        } else {
+            return parseInt(cell.innerHTML, 10);
+        }
+    },
+
+    // отмечает строку целиком
+    markRow: function (number) {
+        const that = this;
+        Array.prototype.forEach.call(that.table.rows[number].cells, function (cell) {
+            that.markCell(cell, true);
+        })
+    },
+
+    // отмечает колонку целиком
+    markColumn: function (number) {
+        const that = this;
+        Array.prototype.forEach.call(that.table.rows, function (row) {
+            that.markCell(row.cells[number], true);
+        })
+    },
+
+    // отмечает область целиком
+    markArea: function (number) {
+        const that = this;
+        let area = Math.sqrt(that.expo);
+        let startRow = parseInt(number / area, 10) * area;
+        let startColumn = (number % area) * area;
+        for (let i = 0; i < area; i++) {
+            for (let j = 0; j < area; j++) {
+                that.markCell(that.table.rows[i + startRow].cells[j + startColumn], true);
+            }
+        }
+    },
+
+    // Снимает отметки со всего игрового поля
+    unmark: function () {
+        const that = this;
+        Array.prototype.forEach.call(that.table.rows, function (row, i) {
+            Array.prototype.forEach.call(row.cells, function (cell, j) {
+                that.markCell(cell, false);
+            })
+        })
     }
 }
 
@@ -223,12 +365,12 @@ app.Generator.prototype = {
     /**
      * Метод качественной перетасовки цифр в таблице значений
      */
-    shakeAll: function() {
+    shakeAll: function () {
         const that = this;
         let shaked = [].fillIncr(that.expo, 1);
         // Смешиваем массив случайным образом
         shaked.shuffle();
-        for(let i = 0; i < that.expo; i++) {
+        for (let i = 0; i < that.expo; i++) {
             for (let j = 0; j < that.expo; j++) {
                 that.rows[i][j] = shaked[that.rows[i][j] - 1];
             }
@@ -245,13 +387,15 @@ let generator = new app.Generator();
 // generator.invertVerrtical().swapRows(15);
 // Четыре метода перемешивания
 generator.swapColumnsRange(15)
-        .swapRowsRange(15)
-        .swapColumns(15)
-        .swapRows(15)
-        .shakeAll();
+    .swapRowsRange(15)
+    .swapColumns(15)
+    .swapRows(15)
+    .shakeAll();
 
 // Перемешивание стандартное (по вероятности 1:1)
 util.randomInteger(0, 1) ? generator.invertHorizontal() : 0;
 util.randomInteger(0, 1) ? generator.invertVerrtical() : 0;
 
 tbl.fill(generator.rows);
+
+tbl.hide(45);
