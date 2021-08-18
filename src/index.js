@@ -176,9 +176,9 @@ app.Generator.prototype = {
             let values = that.getPositions();
             let sourcePosition = area + that.area + values.startPos;
             let destPosition = area * that.area + values.destPos;
-            for (let i = 0; i < that.expo; j++) {
-                let cell = that.rows[j].splice(sourcePosition, 1)[0];
-                that.rows[j].splice(destPosition, 0, cell);
+            for (let i = 0; i < that.expo; i++) {
+                let cell = that.rows[i].splice(sourcePosition, 1)[0];
+                that.rows[i].splice(destPosition, 0, cell);
             }
         }
         return that;
@@ -191,7 +191,7 @@ app.Generator.prototype = {
             let values = that.getPositions();
             let rows = that.rows.splice(values.startPos + that.area, that.area);
             let args = [values.destPos * that.area, 0].concat(rows);
-            that.rows.splice.apply(that.values, args);
+            that.rows.splice.apply(that.rows, args);
         }
         return that;
     },
@@ -204,7 +204,7 @@ app.Generator.prototype = {
             for (let j = 0; j < that.expo; j++) {
                 let cells = that.rows[j].splice(values.startPos + that.area, that.area);
                 let args = [values.destPos * that.area, 0].concat(cells);
-                that.rows[j].splice.apply(that.values[j], args);
+                that.rows[j].splice.apply(that.rows[j], args);
             }
         }
         return that;
@@ -215,5 +215,17 @@ let tbl = new app.Sudoku();
 document.querySelector('#playGround').appendChild(tbl.table);
 
 let generator = new app.Generator();
-generator.invertVerrtical().swapRows(15);
+
+// Перемешивание
+// generator.invertVerrtical().swapRows(15);
+// Четыре метода перемешивания
+generator.swapColumnsRange(15)
+        .swapRowsRange(15)
+        .swapColumns(15)
+        .swapRows(15);
+
+// Перемешивание стандартное (по вероятности 1:1)
+util.randomInteger(0, 1) ? generator.invertHorizontal() : 0;
+util.randomInteger(0, 1) ? generator.invertVerrtical() : 0;
+
 tbl.fill(generator.rows);
