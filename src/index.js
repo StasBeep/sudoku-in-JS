@@ -114,9 +114,20 @@ app.Generator = function(area) {
     that.area = area;
 }
 
+/**
+ * Прототип перемешивания цисел таблицы
+ */
+app.Generator.prototype = {
+    invertVerrtical: function() {
+        const that = this;
+        that.rows.reverse();
+        return that;
+    }
+}
 
 let tbl = new app.Sudoku();
 document.body.appendChild(tbl.table);
 
 let generator = new app.Generator();
+generator.invertVerrtical();
 tbl.fill(generator.rows);
