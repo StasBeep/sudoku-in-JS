@@ -1,1 +1,38 @@
-/* No CSS *//*# sourceMappingURL=style.css.map */
+html {
+  font-size: 20px;
+  font-family: Arial, sans-serif;
+}
+
+#playGround {
+  width: 100%;
+  text-align: center;
+}
+
+.sudoku {
+  display: inline-table;
+  border: solid 2px;
+  border-spacing: 1px;
+}
+
+.sudoku td {
+  border: solid 1px;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.sudoku td.top {
+  border-top: solid 2px;
+}
+
+.sudoku td.bottom {
+  border-bottom: solid 2px;
+}
+
+.sudoku td.left {
+  border-left: solid 2px;
+}
+
+.sudoku td.right {
+  border-right: solid 2px;
+}
+/*# sourceMappingURL=style.css.map */

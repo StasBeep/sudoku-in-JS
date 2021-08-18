@@ -1,0 +1,37 @@
+html {
+    font-size: 20px;
+    font-family: Arial, sans-serif;
+}
+
+#playGround {
+    width: 100%;
+    text-align: center;
+}
+
+.sudoku {
+    display: inline-table;
+    border:  solid 2px;
+    border-spacing: 1px;
+
+    & td {
+        border:  solid 1px;
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    & td.top{
+        border-top: solid 2px;
+    }
+
+    & td.bottom{
+        border-bottom: solid 2px;
+    }
+
+    & td.left{
+        border-left: solid 2px;
+    }
+
+    & td.right{
+        border-right: solid 2px;
+    }
+}

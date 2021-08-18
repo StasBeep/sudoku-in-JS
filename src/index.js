@@ -41,7 +41,7 @@ let app = {};
 app.Sudoku = function(area) {
     let that = this;
     const table = document.createElement('table');
-    table.addClass('sudoku-table');
+    table.addClass('sudoku');
     // Конфликт имён
     var area = area || 3;
     let expo = area * area;
@@ -50,6 +50,22 @@ app.Sudoku = function(area) {
         for(let j = 0; j < expo; j++) {
             let cell = row.insertCell(-1);
             cell.innerHTML = i + ';' + j;
+            switch(i % area) {
+                case 0:
+                    cell.addClass('top');
+                    break;
+                case area-1:
+                    cell.addClass("bottom");
+                    break;
+            }
+            switch(j % area) {
+                case 0:
+                    cell.addClass('left');
+                    break;
+                case area-1:
+                    cell.addClass("right");
+                    break;
+            }
         }
     }
     that.table = table;
