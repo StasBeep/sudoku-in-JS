@@ -122,7 +122,15 @@ app.Generator.prototype = {
         const that = this;
         that.rows.reverse();
         return that;
-    }
+    },
+
+    invertHorizontal: function() {
+        const that = this;
+        for(let i = 0; i < that.expo; i++) {
+            that.values[i].reverse();
+        }
+        return that;
+    },
 }
 
 let tbl = new app.Sudoku();
