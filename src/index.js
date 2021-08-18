@@ -30,6 +30,16 @@ Array.method('popRandom', function () {
     return this.splice(Math.floor(Math.random() * this.length), 1)[0];
 })
 
+Array.method("shuffle", function () {
+    for(let i = 0; i < this.length; i++) {
+        let index = Math.floor(Math.random() * (i + 1));
+        let saved = this[index];
+        this[index] = this[i];
+        this[i] = saved;
+    }
+    return this;
+})
+
 // Добавление недостающих классов
 Element.method("addClass", function (className) {
     let classes = this.className.split(" ");
@@ -208,6 +218,21 @@ app.Generator.prototype = {
             }
         }
         return that;
+    },
+
+    /**
+     * Метод качественной перетасовки цифр в таблице значений
+     */
+    shakeAll: function() {
+        const that = this;
+        let shaked = [].fillIncr(that.expo, 1);
+        // Смешиваем массив случайным образом
+        shaked.shuffle();
+        for(let i = 0; i < that.expo; i++) {
+            for (let j = 0; j < that.expo; j++) {
+                that.rows[i][j] = shaked[that.rows[i][j] - 1];
+            }
+        }
     }
 }
 
@@ -222,7 +247,8 @@ let generator = new app.Generator();
 generator.swapColumnsRange(15)
         .swapRowsRange(15)
         .swapColumns(15)
-        .swapRows(15);
+        .swapRows(15)
+        .shakeAll();
 
 // Перемешивание стандартное (по вероятности 1:1)
 util.randomInteger(0, 1) ? generator.invertHorizontal() : 0;
