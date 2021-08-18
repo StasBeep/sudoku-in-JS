@@ -14,6 +14,7 @@ Array.method("fillIncr", function(length, start) {
     for(let i = 0; i < length; i++) {
         this.push(start + i);
     }
+    return this;
 })
 
 // Добавление недостающих классов
@@ -50,6 +51,8 @@ app.Sudoku = function(area) {
         for(let j = 0; j < expo; j++) {
             let cell = row.insertCell(-1);
             cell.innerHTML = i + ';' + j;
+
+            // Выделение секторов (с помощью деления с остатком)
             switch(i % area) {
                 case 0:
                     cell.addClass('top');
@@ -68,8 +71,52 @@ app.Sudoku = function(area) {
             }
         }
     }
+    // Определение для внешнего доступа
     that.table = table;
+    that.expo = expo;
 }
+
+// Определение прототипа для класса Sudoku
+app.Sudoku.prototype = {
+    fill: function(values) {
+        const that = this;
+        that.values = values;
+
+        for(let i = 0; i < that.expo; i++){
+            let row = that.table.rows[i];
+            for(let j = 0; j < that.expo; j++) {
+                let cell = that.table.rows[i].cells[j];
+                cell.innerHTML = values[i][j];
+            }
+        }
+    }
+}
+
+// Потом через сервер будет реализация (вывод чисел)
+app.Generator = function(area) {
+    const that = this;
+    var area = area || 3;
+    const expo = area * area;
+    const base = [].fillIncr(expo, 1);
+    var rows = [];
+
+    for(let i = 0; i < expo; i++){
+        var row = [];
+        // смещение базового массива
+        let start = (i % area) * area + parseInt(i / area, 10);
+        for(let j = 0; j < expo; j++) {
+            row.push(base.slice(start, expo).concat(base)[j]);
+        }
+        rows.push(row);
+    }
+    that.rows = rows;
+    that.expo = expo;
+    that.area = area;
+}
+
 
 let tbl = new app.Sudoku();
 document.body.appendChild(tbl.table);
+
+let generator = new app.Generator();
+tbl.fill(generator.rows);
