@@ -212,7 +212,7 @@ app.Generator.prototype = {
 }
 
 let tbl = new app.Sudoku();
-document.body.appendChild(tbl.table);
+document.querySelector('#playGround').appendChild(tbl.table);
 
 let generator = new app.Generator();
 generator.invertVerrtical().swapRows(15);
