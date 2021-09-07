@@ -17,21 +17,43 @@ html {
         border:  solid 1px;
         width: 1.5rem;
         height: 1.5rem;
+
+        &.top{
+            border-top: solid 2px;
+        }
+    
+        &.bottom{
+            border-bottom: solid 2px;
+        }
+    
+        &.left{
+            border-left: solid 2px;
+        }
+    
+        &.right{
+            border-right: solid 2px;
+        }
     }
 
-    & td.top{
-        border-top: solid 2px;
+    & input {
+        width: inherit;
+        height: inherit;
+        padding: 0;
+        text-align: center;
+        color: brown;
+        background: none;
+        font-size: 20px;
     }
 
-    & td.bottom{
-        border-bottom: solid 2px;
+    & .marked{
+        background-color: #9ce29c;
     }
-
-    & td.left{
-        border-left: solid 2px;
-    }
-
-    & td.right{
-        border-right: solid 2px;
+    
+    & .mistake {
+        background-color: darksalmon;
     }
 }
+
+.timer .display {
+    margin: 2rem;
+} 

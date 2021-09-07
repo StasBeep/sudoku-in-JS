@@ -40,6 +40,22 @@ Array.method("shuffle", function () {
     return this;
 })
 
+Array.method('findAndReplace', function (find, replace) {
+    let index = this.indexOf(find);
+    if (index > -1) {
+        this[index] = replace;
+    }
+})
+
+Array.method('allMembers', function (value) {
+    for (let i = 0; i < this.length; i++) {
+        if (this[i] !== value) {
+            return false;
+        }
+    }
+    return true;
+})
+
 // Добавление недостающих классов
 Element.method("addClass", function (className) {
     let classes = this.className.split(" ");
@@ -123,8 +139,8 @@ app.Sudoku.prototype = {
                 let rowNumber = util.randomInteger(0, that.expo - 1);
                 let colNumber = util.randomInteger(0, that.expo - 1);
                 // если поле уже скрыто, выбираем новое значение
-                if (!that.table.rows[rowNumber].cells[colNumber].hidden) {
-                    that.table.rows[rowNumber].cells[colNumber].hidden = true;
+                if (!that.table.rows[rowNumber].cells[colNumber].hided) {
+                    that.table.rows[rowNumber].cells[colNumber].hided = true;
                     that.table.rows[rowNumber].cells[colNumber].innerHTML = "";
                     let editCell = document.createElement("input");
                     that.table.rows[rowNumber].cells[colNumber].appendChild(editCell);
@@ -137,6 +153,7 @@ app.Sudoku.prototype = {
                 }
             }
         }
+        that.check();
     },
 
     check: function () {
@@ -187,14 +204,14 @@ app.Sudoku.prototype = {
                 that.markArea(i);
                 correct.areas++;
             }
+        }
 
-            // если все группы отмечены как правильные, игра заканчивается
-            if (correct.rows === that.expo &&
-                correct.columns === that.expo &&
-                correct.areas === that.expo) {
-                if (typeof (that.win) === 'function') {
-                    that.win();
-                }
+        // если все группы отмечены как правильные, игра заканчивается
+        if (correct.rows === that.expo &&
+            correct.columns === that.expo &&
+            correct.areas === that.expo) {
+            if (typeof (that.win) === 'function') {
+                that.win();
             }
         }
     },
@@ -222,7 +239,7 @@ app.Sudoku.prototype = {
         const that = this;
         Array.prototype.forEach.call(that.table.rows[number].cells, function (cell) {
             that.markCell(cell, true);
-        })
+        });
     },
 
     // отмечает колонку целиком
@@ -230,7 +247,7 @@ app.Sudoku.prototype = {
         const that = this;
         Array.prototype.forEach.call(that.table.rows, function (row) {
             that.markCell(row.cells[number], true);
-        })
+        });
     },
 
     // отмечает область целиком
@@ -252,8 +269,15 @@ app.Sudoku.prototype = {
         Array.prototype.forEach.call(that.table.rows, function (row, i) {
             Array.prototype.forEach.call(row.cells, function (cell, j) {
                 that.markCell(cell, false);
-            })
-        })
+            });
+        });
+    },
+
+    // Возвращает номер обсласти по номеру строки и столбца
+    getArea: function (row, column) {
+        const that = this;
+        let area = Math.sqrt(that.expo);
+        return parseInt(row / area) * area + parseInt(column / area);
     }
 }
 
@@ -398,4 +422,5 @@ util.randomInteger(0, 1) ? generator.invertVerrtical() : 0;
 
 tbl.fill(generator.rows);
 
-tbl.hide(45);
+// Количество закрытых ячеек
+tbl.hide(2);
