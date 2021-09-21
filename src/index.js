@@ -433,11 +433,13 @@ app.Timer.prototype = {
     }
 }
 
+// ! - Параметры указывающие на сложность игры и количество перемешиваний
 app.parameters = {
     area: 3, //размер области
-    shuffle: 5, //количество перемешивания
-    hided: 1 // Количество скрытых ячеек
+    shuffle: 7, //количество перемешивания
+    hided: 45 // Количество скрытых ячеек
 }
+// ! ====================================================================
 
 let tbl = new app.Sudoku(app.parameters.area);
 document.querySelector('#playGround').appendChild(tbl.table);
