@@ -47,7 +47,7 @@ Array.method('findAndReplace', function (find, replace) {
     }
 })
 
-Array.method("allMembers", function(value) {
+Array.method("allMembers", function (value) {
     for (let i = 0; i < this.length; i++) {
         if (this[i] !== value) {
             return false;
@@ -305,14 +305,12 @@ app.Generator = function (area) {
  * Прототип перемешивания цисел таблицы
  */
 
-//! Где-то в этой области ошибка ---------------
 app.Generator.prototype = {
-    invertVerrtical: function () {
+    invertVertical: function () {
         const that = this;
         that.rows.reverse();
         return that;
     },
-
     invertHorizontal: function () {
         const that = this;
         for (let i = 0; i < that.expo; i++) {
@@ -329,63 +327,58 @@ app.Generator.prototype = {
         }
         return positions;
     },
-
     // Перемешивание строки
     swapRows: function (count) {
         const that = this;
         for (let i = 0; i < count; i++) {
             let area = util.randomInteger(0, that.area - 1);
             let values = that.getPositions();
-            let sourcePosition = area + that.area + values.startPos;
+            let sourcePosition = area * that.area + values.startPos;
             let destPosition = area * that.area + values.destPos;
             let row = that.rows.splice(sourcePosition, 1)[0];
             that.rows.splice(destPosition, 0, row);
         }
         return that;
     },
-
     // Перемешивание столбца
     swapColumns: function (count) {
         const that = this;
         for (let i = 0; i < count; i++) {
             let area = util.randomInteger(0, that.area - 1);
             let values = that.getPositions();
-            let sourcePosition = area + that.area + values.startPos;
+            let sourcePosition = area * that.area + values.startPos;
             let destPosition = area * that.area + values.destPos;
             for (let i = 0; i < that.expo; i++) {
                 let cell = that.rows[i].splice(sourcePosition, 1)[0];
                 that.rows[i].splice(destPosition, 0, cell);
             }
+            return that;
         }
-        return that;
     },
-
     // Пееремешивает горизонтальные области
     swapRowsRange: function (count) {
-        let that = this;
+        const that = this;
         for (let i = 0; i < count; i++) {
             let values = that.getPositions();
-            let rows = that.rows.splice(values.startPos + that.area, that.area);
+            let rows = that.rows.splice(values.startPos * that.area, that.area);
             let args = [values.destPos * that.area, 0].concat(rows);
             that.rows.splice.apply(that.rows, args);
         }
         return that;
     },
-
     // Перемешиивает вертикальные области
     swapColumnsRange: function (count) {
-        let that = this;
+        const that = this;
         for (let i = 0; i < count; i++) {
             let values = that.getPositions();
             for (let j = 0; j < that.expo; j++) {
-                let cells = that.rows[j].splice(values.startPos + that.area, that.area);
+                let cells = that.rows[j].splice(values.startPos * that.area, that.area);
                 let args = [values.destPos * that.area, 0].concat(cells);
                 that.rows[j].splice.apply(that.rows[j], args);
             }
         }
         return that;
     },
-
     /**
      * Метод качественной перетасовки цифр в таблице значений
      */
@@ -399,9 +392,9 @@ app.Generator.prototype = {
                 that.rows[i][j] = shaked[that.rows[i][j] - 1];
             }
         }
+        return that;
     }
 }
-//! -----------------------------------------------
 
 // конструктор для типа Timer, который будет отвечать за учёт времени очков
 app.Timer = function () {
@@ -462,7 +455,7 @@ generator.swapColumnsRange(app.parameters.shuffle)
 
 // Перемешивание стандартное (по вероятности 1:1)
 util.randomInteger(0, 1) ? generator.invertHorizontal() : 0;
-util.randomInteger(0, 1) ? generator.invertVerrtical() : 0;
+util.randomInteger(0, 1) ? generator.invertVertical() : 0;
 
 tbl.fill(generator.rows);
 
