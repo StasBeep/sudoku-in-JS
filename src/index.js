@@ -56,19 +56,19 @@ Array.method("allMembers", function(value) {
     return true;
 });
 
-Element.method("addClass", function(className){
+Element.method("addClass", function (className) {
     let classes = this.className.split(" ");
-    if(classes.indexOf(className) < 0){
+    if (classes.indexOf(className) < 0) {
         classes.push(className);
         this.className = classes.join(" ").trim();
     }
     return this;
 })
 
-Element.method("removeClass", function(className){
+Element.method("removeClass", function (className) {
     let classes = this.className.split(" ");
     let index = classes.indexOf(className);
-    if(index >= 0){
+    if (index >= 0) {
         classes.splice(index, 1);
         this.className = classes.join(" ").trim();
     }
@@ -235,7 +235,7 @@ app.Sudoku.prototype = {
     // отмечает строку целиком
     markRow: function (number) {
         const that = this;
-        Array.prototype.forEach.call(that.table.rows[number].cells, function(cell) {
+        Array.prototype.forEach.call(that.table.rows[number].cells, function (cell) {
             that.markCell(cell, true);
         });
     },
@@ -243,8 +243,8 @@ app.Sudoku.prototype = {
     // отмечает колонку целиком
     markColumn: function (number) {
         const that = this;
-        Array.prototype.forEach.call(that.table.rows, function(row) {
-            that.markCell(row.cells[number], true); 
+        Array.prototype.forEach.call(that.table.rows, function (row) {
+            that.markCell(row.cells[number], true);
         });
     },
 
@@ -304,6 +304,8 @@ app.Generator = function (area) {
 /**
  * Прототип перемешивания цисел таблицы
  */
+
+//! Где-то в этой области ошибка ---------------
 app.Generator.prototype = {
     invertVerrtical: function () {
         const that = this;
@@ -399,6 +401,7 @@ app.Generator.prototype = {
         }
     }
 }
+//! -----------------------------------------------
 
 // конструктор для типа Timer, который будет отвечать за учёт времени очков
 app.Timer = function () {
@@ -440,7 +443,7 @@ app.Timer.prototype = {
 app.parameters = {
     area: 3, //размер области
     shuffle: 5, //количество перемешивания
-    hided: 2 // Количество скрытых ячеек
+    hided: 1 // Количество скрытых ячеек
 }
 
 let tbl = new app.Sudoku(app.parameters.area);
